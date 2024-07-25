@@ -1,0 +1,15 @@
+.mahjong-tile {
+  display: grid;
+  place-content: center;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+
+  > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.mahjong-hand {
+  display: flex;
+}
