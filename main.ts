@@ -56,14 +56,15 @@ export default class MahjongNotationPlugin extends Plugin {
         const backgroundTile = tileContainer.createEl('img')
         backgroundTile.src = this.getAssetPath('Tile')
         backgroundTile.alt = 'Tile Background'
-        backgroundTile.width = this.settings.tileSize;
-        backgroundTile.height = this.settings.tileSize;
+        // backgroundTile.width = this.settings.tileSize;
+        // backgroundTile.height = this.settings.tileSize;
 
         const tileElement = tileContainer.createEl('img');
         tileElement.src = this.getAssetPath(tile as keyof typeof Tiles.light);
+        tileElement.classList.add('tile-print')
         tileElement.alt = tile;
-        tileElement.width = this.settings.tileSize * 0.8;
-        tileElement.height = this.settings.tileSize * 0.8;
+        // tileElement.width = this.settings.tileSize * 0.8;
+        // tileElement.height = this.settings.tileSize * 0.8;
 
         
         return tileContainer;
