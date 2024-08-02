@@ -115,3 +115,6 @@ This shows a red 5-pin among the pin tiles.
 ```
 
 ![Flush hand](.readme/flush.png)
+
+# Credits
+Tile assets from [riichi-mahjong-tiles](https://github.com/FluffyStuff/riichi-mahjong-tiles) repository.
