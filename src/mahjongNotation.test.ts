@@ -51,7 +51,7 @@ describe('Mahjong Notation Parser', () => {
     });
 
     it('handles separators within block correctly', () => {
-        expect(parseHand('1234-567m')).toEqual(['1m', '2m', '3m', '4m', 'space', '5m', '6m', '7m'])
+        expect(parseHand('1234m-567m')).toEqual(['1m', '2m', '3m', '4m', 'space', '5m', '6m', '7m'])
     });
 
     it('handles rotations correctly', () => {
