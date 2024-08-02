@@ -27,7 +27,7 @@ jobs:
       - name: Build plugin
         run: |
           pnpm install
-          pbpm run build
+          pnpm run build
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
