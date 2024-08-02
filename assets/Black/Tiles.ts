@@ -40,6 +40,8 @@ import White from './Haku.svg'
 import Green from './Hatsu.svg'
 import Red from './Chun.svg'
 import Tile from './Front.svg'
+import Back from './Back.svg'
+
 
 
 export const Tiles = {
@@ -80,5 +82,6 @@ export const Tiles = {
     '5z': White,
     '6z': Green,
     '7z': Red,
+    '5zr': Back,
     Tile
 } as const

@@ -1,7 +1,7 @@
 {
-  "name": "mahjong-hand-renderer",
+  "name": "obsidian-mahjong-renderer",
   "version": "0.1.0",
-  "description": "A plugin allowing you to render Mahjong hands",
+  "description": "Render mahjong hands using MPSZ algebraic notation",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",

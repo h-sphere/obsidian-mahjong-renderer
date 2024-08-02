@@ -2,23 +2,9 @@ import { Plugin, MarkdownPostProcessorContext, App, PluginSettingTab, Setting, n
 import { parseHand } from './src/mahjongNotation';
 import { Tiles } from 'assets/assets';
 
-interface MahjongNotationPluginSettings {
-    tileSize: number;
-}
-
-const DEFAULT_SETTINGS: MahjongNotationPluginSettings = {
-    tileSize: 32
-};
-
 export default class MahjongNotationPlugin extends Plugin {
-    settings: MahjongNotationPluginSettings;
-
     async onload() {
-        await this.loadSettings();
-
         this.registerMarkdownCodeBlockProcessor('mahjong', this.mahjongProcessor.bind(this));
-
-        this.addSettingTab(new MahjongNotationSettingTab(this.app, this));
 
         this.registerEvent(
             this.app.workspace.on('css-change', () => {
@@ -27,20 +13,18 @@ export default class MahjongNotationPlugin extends Plugin {
         );
     }
 
-    async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-    }
-
-    async saveSettings() {
-        await this.saveData(this.settings);
-    }
-
     mahjongProcessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
-        const mahjongHands = el.createDiv({ cls: 'mahjong-hands-wrapper' })
+        const mahjongHands = el.createDiv({ cls: 'mahjong-hands-wrapper' });
+        mahjongHands.dataset.source = source
+        this.renderMahjongHands(source, mahjongHands);
+    }
 
+    renderMahjongHands(source: string, container: HTMLElement) {
+        // Clear existing content
+        container.empty();
         // Split by new line
         source.split('\n').forEach(sourceLine => {
-            const handContainer = mahjongHands.createDiv({ cls: 'mahjong-hand' });
+            const handContainer = container.createDiv({ cls: 'mahjong-hand' });
             try {
                 const handWrapper = handContainer.createDiv({ cls: 'mahjong-hand-wrap' })
                 const tiles = parseHand(sourceLine);
@@ -84,12 +68,16 @@ export default class MahjongNotationPlugin extends Plugin {
     }
 
     createSingleTile(tile: string, container: HTMLElement) {
+        const isBack = tile.startsWith('5zr')
         const compositeTile = container.createEl('div')
         compositeTile.classList.add('tile-design')
         const backgroundTile = compositeTile.createEl('img')
-        backgroundTile.src = this.getAssetPath('Tile')
+        backgroundTile.src = isBack ? this.getAssetPath('5zr') : this.getAssetPath('Tile')
         backgroundTile.alt = 'Tile Background'
 
+        if (isBack) {
+            return
+        }
         const tileElement = compositeTile.createEl('img');
         tileElement.src = this.getAssetPath(tile as keyof typeof Tiles.light);
         tileElement.classList.add('tile-print')
@@ -117,41 +105,14 @@ export default class MahjongNotationPlugin extends Plugin {
     }
 
     updateAllMahjongHands() {
-        const mahjongHands = document.querySelectorAll('.mahjong-hand');
-        mahjongHands.forEach(hand => {
-            const tiles = hand.querySelectorAll('.mahjong-tile');
-            tiles.forEach((tile: HTMLImageElement) => {
-                const tileNotation = tile.alt;
-                tile.src = this.getAssetPath(tileNotation);
-            });
-        });
-    }
-}
-
-class MahjongNotationSettingTab extends PluginSettingTab {
-    plugin: MahjongNotationPlugin;
-
-    constructor(app: App, plugin: MahjongNotationPlugin) {
-        super(app, plugin);
-        this.plugin = plugin;
-    }
-
-    display(): void {
-        const {containerEl} = this;
-        containerEl.empty();
-        containerEl.createEl('h2', {text: 'Mahjong Notation Settings'});
-
-        new Setting(containerEl)
-            .setName('Tile Size')
-            .setDesc('Size of Mahjong tiles in pixels')
-            .addSlider(slider => slider
-                .setLimits(16, 64, 1)
-                .setValue(this.plugin.settings.tileSize)
-                .setDynamicTooltip()
-                .onChange(async (value) => {
-                    this.plugin.settings.tileSize = value;
-                    await this.plugin.saveSettings();
-                    this.plugin.updateAllMahjongHands();
-                }));
+        const mahjongHandsWrappers = document.querySelectorAll<HTMLDivElement>('.mahjong-hands-wrapper');
+        mahjongHandsWrappers.forEach(wrapper => {
+            const sourceValue = wrapper.dataset.source
+            if (!sourceValue) {
+                return
+            }
+            console.log('SOURCE', sourceValue)
+            this.renderMahjongHands(sourceValue, wrapper);
+            })
     }
 }
