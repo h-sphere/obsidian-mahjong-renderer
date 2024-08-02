@@ -20,7 +20,6 @@ export default class MahjongNotationPlugin extends Plugin {
 
         this.addSettingTab(new MahjongNotationSettingTab(this.app, this));
 
-        // Register an event to update tiles when the theme changes
         this.registerEvent(
             this.app.workspace.on('css-change', () => {
                 this.updateAllMahjongHands();
@@ -40,9 +39,18 @@ export default class MahjongNotationPlugin extends Plugin {
         const handContainer = el.createDiv({ cls: 'mahjong-hand' });
 
         try {
+            const handWrapper = handContainer.createDiv({ cls: 'mahjong-hand-wrap' })
             const tiles = parseHand(source);
+            const hasStackedTiles = source.includes('"')
+            if (hasStackedTiles) {
+                handContainer.classList.add('has-stacked')
+            }
             tiles.forEach(tile => {
-                const tileElement = this.createTileElement(tile, handContainer);
+                if (tile === 'space') {
+                    this.createSpaceElement(handWrapper);
+                } else {
+                    const tileElement = this.createTileElement(tile, handWrapper);
+                }
             });
         } catch (error) {
             handContainer.setText(`Error: ${error.message}`);
@@ -53,38 +61,51 @@ export default class MahjongNotationPlugin extends Plugin {
         const tileContainer = parent.createEl('span')
         tileContainer.classList.add('mahjong-tile');
 
-        const backgroundTile = tileContainer.createEl('img')
+        const isRotated = tile.includes("'");
+        const isStacked = tile.includes('"');
+        tile = tile.replace(/['"]/, '');
+
+        if (isRotated) {
+            tileContainer.classList.add('rotated');
+        }
+
+        if (isStacked) {
+            tileContainer.classList.add('stacked');
+            this.createStackedTile(tile, tileContainer);
+        } else {
+            this.createSingleTile(tile, tileContainer);
+        }
+
+        return tileContainer;
+    }
+
+    createSingleTile(tile: string, container: HTMLElement) {
+        const compositeTile = container.createEl('div')
+        compositeTile.classList.add('tile-design')
+        const backgroundTile = compositeTile.createEl('img')
         backgroundTile.src = this.getAssetPath('Tile')
         backgroundTile.alt = 'Tile Background'
-        // backgroundTile.width = this.settings.tileSize;
-        // backgroundTile.height = this.settings.tileSize;
 
-        const tileElement = tileContainer.createEl('img');
+        const tileElement = compositeTile.createEl('img');
         tileElement.src = this.getAssetPath(tile as keyof typeof Tiles.light);
         tileElement.classList.add('tile-print')
         tileElement.alt = tile;
-        // tileElement.width = this.settings.tileSize * 0.8;
-        // tileElement.height = this.settings.tileSize * 0.8;
+    }
 
-        
-        return tileContainer;
+    createStackedTile(tile: string, container: HTMLElement) {
+        this.createSingleTile(tile, container);
+        this.createSingleTile(tile, container);
+    }
+
+    createSpaceElement(parent: HTMLElement): HTMLElement {
+        const spaceElement = parent.createEl('span');
+        spaceElement.classList.add('mahjong-space');
+        return spaceElement;
     }
 
     getAssetPath(tile: keyof typeof Tiles.light): string {
         const theme = this.getCurrentTheme();
-
-        return Tiles[theme][tile] as unknown as string
-        return chun
-
-        // const path = normalizePath(this.app.vault.adapter.basePath + '/' + this.app.vault.configDir + `/assets/${theme}/${tile}.png`)
-        const path = this.app.vault.adapter.basePath + '/' + this.app.vault.configDir + `./assets/${theme}/${tile}.png`
-        const file = this.app.vault.getFileByPath(path)
-        console.log(file)
-        return path;
-        return app.vault.adapter.getResourcePath(`./assets/${theme}/${tile}.png`)
-        return this.app.vault.adapter.getResourcePath(this.app.vault.configDir + "/plugins/" + this.manifest.id + `/assets/${theme}/${tile}.png`)
-        return
-        // return `.obsidian/plugins/mahjong-hand-renderer/assets/${theme}/${tile}.png`;
+        return Tiles[theme][tile] as unknown as string;
     }
 
     getCurrentTheme() {

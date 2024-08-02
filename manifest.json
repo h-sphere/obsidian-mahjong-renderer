@@ -3,7 +3,7 @@
 	"name": "Mahjong Hand Renderer",
 	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "A plugin allowing you to render Mahjong hands",
+	"description": "Render mahjong hands using MPSZ algebraic notation",
 	"author": "hypersphere",
 	"authorUrl": "https://hypersphere.blog/",
 	"fundingUrl": "ko-fi.com/hypersphere",

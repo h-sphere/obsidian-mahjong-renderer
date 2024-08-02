@@ -7,6 +7,8 @@ export class MahjongNotationParser {
 
         for (const group of groups) {
             let currentNumber = '';
+            let isRotated = false;
+            let isStacked = false;
             for (let i = 0; i < group.length; i++) {
                 const char = group[i];
                 if (char >= '0' && char <= '9') {
@@ -17,9 +19,24 @@ export class MahjongNotationParser {
                     }
                     const numbers = currentNumber.split('');
                     for (const num of numbers) {
-                        tiles.push(this.normalizeTile(`${num}${char}`));
+                        let tile = this.normalizeTile(`${num}${char}`);
+                        if (isRotated) {
+                            tile += "'";
+                            isRotated = false;
+                        }
+                        if (isStacked) {
+                            tile += '"';
+                            isStacked = false;
+                        }
+                        tiles.push(tile);
                     }
                     currentNumber = '';
+                } else if (char === '-') {
+                    tiles.push('space');
+                } else if (char === "'") {
+                    isRotated = true;
+                } else if (char === '"') {
+                    isStacked = true;
                 } else {
                     throw new Error(`Invalid character in notation: ${char}`);
                 }
