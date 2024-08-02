@@ -1,4 +1,35 @@
 .mahjong-tile {
+  flex: 1;
+
+  &.rotated {
+    flex: calc(4 / 3);
+    transform: translate(0, 100%) rotate(-90deg);
+    transform-origin: top left;
+    display: grid;
+    grid-template-columns: 75% 25%;
+  }
+
+  &.stacked {
+    flex: calc(4 /3);
+    transform: translate(0, 100%) rotate(-90deg);
+    transform-origin: top left;
+    display: grid;
+    grid-template-columns: 75% 25%;
+    > * {
+      grid-area: 1 / 1;
+    }
+    > :nth-child(2) {
+      transform: translate(calc(100% + 0.2em), 0);
+    }
+  }
+}
+
+.mahjong-space {
+  flex: 1;
+}
+
+.tile-design {
+  flex: 1;
   display: grid;
   place-content: center;
   justify-content: center;
@@ -10,6 +41,28 @@
   }
 }
 
+
 .mahjong-hand {
+  display: grid;
+  &.has-stacked {
+    grid-template-rows: 1fr 2fr;
+    .mahjong-hand-wrap {
+      grid-area: 2 / 1;
+    }
+  }
+}
+
+.mahjong-hands-wrapper {
   display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
+.mahjong-hand-wrap {
+  display: flex;
+  gap: 0.2em;
+}
+
+.tile-print {
+  padding: 10%;
 }

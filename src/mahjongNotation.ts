@@ -1,33 +1,62 @@
+//|| src/mahjongNotation.ts
 // mahjongNotation.ts
 
 export class MahjongNotationParser {
     static parseMahjongNotation(notation: string): string[] {
         const tiles: string[] = [];
-        const groups = notation.split(/\s+|\|/).filter(group => group.trim() !== '');
+        let currentNumbers = '';
+        let currentSuit = '';
+        let modifiers: string[] = [];
 
-        for (const group of groups) {
-            let currentNumber = '';
-            for (let i = 0; i < group.length; i++) {
-                const char = group[i];
-                if (char >= '0' && char <= '9') {
-                    currentNumber += char;
-                } else if (char === 'm' || char === 'p' || char === 's' || char === 'z') {
-                    if (currentNumber === '') {
-                        throw new Error(`Invalid notation: suit without number before ${char}`);
+        const finalizeTiles = () => {
+            if (currentNumbers && currentSuit) {
+                for (let i = 0; i < currentNumbers.length; i++) {
+                    let tile = this.normalizeTile(`${currentNumbers[i]}${currentSuit}`);
+                    if (modifiers[i]) {
+                        tile += modifiers[i];
                     }
-                    const numbers = currentNumber.split('');
-                    for (const num of numbers) {
-                        tiles.push(this.normalizeTile(`${num}${char}`));
-                    }
-                    currentNumber = '';
-                } else {
-                    throw new Error(`Invalid character in notation: ${char}`);
+                    tiles.push(tile);
                 }
-            }
-            if (currentNumber !== '') {
+                currentNumbers = '';
+                currentSuit = '';
+                modifiers = [];
+            } else if (currentNumbers && !currentSuit) {
                 throw new Error(`Invalid notation: number without suit at the end of group`);
             }
+        };
+
+        for (let i = 0; i < notation.length; i++) {
+            const char = notation[i];
+            if (char >= '0' && char <= '9') {
+                currentNumbers += char;
+                modifiers.push('');
+            } else if (char === 'm' || char === 'p' || char === 's' || char === 'z') {
+                if (currentNumbers === '') {
+                    throw new Error(`Invalid notation: suit without number before ${char}`);
+                }
+                if (currentSuit && currentSuit !== char) {
+                    finalizeTiles();
+                }
+                currentSuit = char;
+                finalizeTiles();
+            } else if (char === '-') {
+                finalizeTiles();
+                tiles.push('space');
+            } else if (char === "'" || char === '"') {
+                if (currentNumbers.length > 0) {
+                    modifiers[currentNumbers.length - 1] += char;
+                } else if (tiles.length > 0) {
+                    let lastTile = tiles.pop()!;
+                    tiles.push(lastTile + char);
+                }
+            } else if (char === ' ' || char === '|') {
+                finalizeTiles();
+            } else {
+                throw new Error(`Invalid character in notation: ${char}`);
+            }
         }
+
+        finalizeTiles();
 
         return tiles;
     }
