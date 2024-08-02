@@ -1,7 +1,7 @@
 {
   "name": "obsidian-mahjong-renderer",
   "version": "0.1.0",
-  "description": "Render mahjong hands using MPSZ algebraic notation",
+  "description": "Render mahjong hands (riichi mahjong) using MPSZ algebraic notation",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",

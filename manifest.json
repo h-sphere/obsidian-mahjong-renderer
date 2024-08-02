@@ -1,9 +1,9 @@
 {
-	"id": "mahjong-hand-renderer",
-	"name": "Mahjong Hand Renderer",
+	"id": "mahjong-renderer",
+	"name": "Mahjong Renderer",
 	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "Render mahjong hands using MPSZ algebraic notation",
+	"description": "Render mahjong hands (riichi mahjong) using MPSZ algebraic notation",
 	"author": "hypersphere",
 	"authorUrl": "https://hypersphere.blog/",
 	"fundingUrl": "ko-fi.com/hypersphere",
