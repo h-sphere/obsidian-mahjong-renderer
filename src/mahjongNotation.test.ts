@@ -1,5 +1,3 @@
-// mahjongNotation.test.ts
-
 import { parseHand } from './mahjongNotation';
 
 describe('Mahjong Notation Parser', () => {
@@ -47,4 +45,23 @@ describe('Mahjong Notation Parser', () => {
         const expected = ['1m', '2m', '3m', '4p', '5p', '6p', '7s', '8s', '9s', '1z', '1z'];
         expect(parseHand(input)).toEqual(expected);
     });
+
+    it('handles separators (-) correctly', () => {
+        expect(parseHand('1m-2p 3s')).toEqual(['1m', 'space', '2p', '3s'])
+    });
+
+    it('handles separators within block correctly', () => {
+        expect(parseHand('1234-567m')).toEqual(['1m', '2m', '3m', '4m', 'space', '5m', '6m', '7m'])
+    });
+
+    it('handles rotations correctly', () => {
+        expect(parseHand("1'2m")).toEqual(["1m'", '2m'])
+        expect(parseHand("12'm 56'7s")).toEqual(['1m', "2m'", '5s', "6s'", '7s'])
+    })
+
+    it('handles stacking correctly', () => {
+        expect(parseHand('1"m')).toEqual(['1m"'])
+        expect(parseHand('1"234m')).toEqual(['1m"', '2m', '3m', '4m'])
+        expect(parseHand('123"4m')).toEqual(['1m', '2m', '3m"', '4m'])
+    })
 });

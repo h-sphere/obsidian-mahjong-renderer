@@ -52,6 +52,12 @@
   }
 }
 
+.mahjong-hands-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
 .mahjong-hand-wrap {
   display: flex;
   gap: 0.2em;

@@ -36,25 +36,29 @@ export default class MahjongNotationPlugin extends Plugin {
     }
 
     mahjongProcessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
-        const handContainer = el.createDiv({ cls: 'mahjong-hand' });
+        const mahjongHands = el.createDiv({ cls: 'mahjong-hands-wrapper' })
 
-        try {
-            const handWrapper = handContainer.createDiv({ cls: 'mahjong-hand-wrap' })
-            const tiles = parseHand(source);
-            const hasStackedTiles = source.includes('"')
-            if (hasStackedTiles) {
-                handContainer.classList.add('has-stacked')
-            }
-            tiles.forEach(tile => {
-                if (tile === 'space') {
-                    this.createSpaceElement(handWrapper);
-                } else {
-                    const tileElement = this.createTileElement(tile, handWrapper);
+        // Split by new line
+        source.split('\n').forEach(sourceLine => {
+            const handContainer = mahjongHands.createDiv({ cls: 'mahjong-hand' });
+            try {
+                const handWrapper = handContainer.createDiv({ cls: 'mahjong-hand-wrap' })
+                const tiles = parseHand(sourceLine);
+                const hasStackedTiles = source.includes('"')
+                if (hasStackedTiles) {
+                    handContainer.classList.add('has-stacked')
                 }
-            });
-        } catch (error) {
-            handContainer.setText(`Error: ${error.message}`);
-        }
+                tiles.forEach(tile => {
+                    if (tile === 'space') {
+                        this.createSpaceElement(handWrapper);
+                    } else {
+                        const tileElement = this.createTileElement(tile, handWrapper);
+                    }
+                });
+            } catch (error) {
+                handContainer.setText(`Error: ${error.message}`);
+            }
+        })
     }
 
     createTileElement(tile: string, parent: HTMLElement): HTMLElement {
