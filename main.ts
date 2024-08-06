@@ -73,7 +73,7 @@ export default class MahjongNotationPlugin extends Plugin {
         compositeTile.classList.add('tile-design')
         const backgroundTile = compositeTile.createEl('img')
         backgroundTile.src = isBack ? this.getAssetPath('5zr') : this.getAssetPath('Tile')
-        backgroundTile.alt = 'Tile Background'
+        backgroundTile.alt = 'Tile background'
 
         if (isBack) {
             return
@@ -111,7 +111,6 @@ export default class MahjongNotationPlugin extends Plugin {
             if (!sourceValue) {
                 return
             }
-            console.log('SOURCE', sourceValue)
             this.renderMahjongHands(sourceValue, wrapper);
             })
     }
